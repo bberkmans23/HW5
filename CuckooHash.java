@@ -249,8 +249,41 @@ public class CuckooHash<K, V> {
 		// ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME AT TOP OF FILE.
 		// Also make sure you read this method's prologue above, it should help
 		// you. Especially the two HINTS in the prologue.
+		int pos1 = hash1(key);
+		int pos2 = hash2(key);
+		if (table[pos1] != null &&
+			table[pos1].getBucKey().equals(key) &&
+			table[pos1].getValue().equals(value)) return;
+		if (table[pos2] != null &&
+			table[pos2].getBucKey().equals(key) &&
+			table[pos2].getValue().equals(value)) return;
 
-		return;
+		K curK = key;
+		V curV = value;
+		int pos = pos1; // initial placement uses h1(key)
+
+		for (int i = 0; i < CAPACITY; i++) {
+			if (table[pos] == null) {
+				table[pos] = new Bucket<>(curK, curV);
+				return;
+			}
+
+			// Kick out occupant at 'pos'
+			Bucket<K,V> displaced = table[pos];
+			table[pos] = new Bucket<>(curK, curV);
+
+			// Prepare to move displaced to its alternate bucket
+			curK = displaced.getBucKey();
+			curV = displaced.getValue();
+
+			int h1 = hash1(curK);
+			int h2 = hash2(curK);
+			pos = (pos == h1) ? h2 : h1; // alternate between two positions
+		}
+
+		// After CAPACITY moves, assume cycle, grow & rehash, then retry remaining pair
+		rehash();
+		put(curK, curV);
 	}
 
 
