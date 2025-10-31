@@ -33,8 +33,12 @@ class ProblemSolutions {
     public boolean isSubset(int list1[], int list2[]) {
 
         // ADD YOU CODE HERE -- DON'T FORGET TO ADD YOR NAME AT TOP OF FILE
-
-        return false;
+         Set<Integer> set = new HashSet<>();
+        for (int x : list1) set.add(x);
+        for (int y : list2) {
+            if (!set.contains(y)) return false;
+        }
+        return true;
     }
 
 
@@ -54,8 +58,16 @@ class ProblemSolutions {
     public int findKthLargest(int[] array, int k) {
 
         // ADD YOUR CODE HERE
-
-        return 0;
+        PriorityQueue<Integer> pq = new PriorityQueue<>(k); // min-heap
+        for (int n : array) {
+            if (pq.size() < k) {
+                pq.offer(n);
+            } else if (n > pq.peek()) {
+                pq.poll();
+                pq.offer(n);
+            }
+        }
+        return pq.peek();
     }
 
 
@@ -75,8 +87,14 @@ class ProblemSolutions {
     public int[] sort2Arrays(int[] array1, int[] array2) {
 
         // ADD YOU CODE HERE
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for (int x : array1) pq.offer(x);
+        for (int y : array2) pq.offer(y);
 
-        return null;
+        int[] out = new int[array1.length + array2.length];
+        int i = 0;
+        while (!pq.isEmpty()) out[i++] = pq.poll();
+        return out;
     }
 
 }
